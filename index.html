@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AthleTech - AI Athletic Coaching</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:system-ui,sans-serif;
+      background:#0a0a0a;
+      color:#fff;
+      overflow-x:hidden
+    }
+    .hero{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:100px 20px 40px;
+      position:relative;
+      background:linear-gradient(135deg,#0a0a0a 0%,#1a0b2e 50%,#2d1b4e 100%);
+    }
+    .hero::before{
+      content:'';
+      position:absolute;
+      top:50%;
+      left:50%;
+      width:600px;
+      height:600px;
+      background:radial-gradient(circle,rgba(124,58,237,0.3) 0%,transparent 70%);
+      transform:translate(-50%,-50%);
+      animation:pulse 4s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.3}
+      50%{transform:translate(-50%,-50%) scale(1.2);opacity:0.5}
+    }
+    .hero-content{position:relative;z-index:2;max-width:1000px}
+    .logo{
+      width:160px;
+      height:160px;
+      margin:0 auto 30px;
+      background:linear-gradient(135deg,#7c3aed,#a78bfa);
+      border-radius:0px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:48px;
+      font-weight:900;
+      box-shadow:0 20px 60px rgba(124,58,237,0.4);
+      border:2px solid #c4b5fd;
+      overflow:hidden
+    }
+    h1{
+      font-size:clamp(48px,8vw,86px);
+      font-weight:900;
+      margin-bottom:20px;
+      background:linear-gradient(135deg,#fff,#c4b5fd);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text
+    }
+    .tagline{
+      font-size:clamp(18px,3vw,24px);
+      color:#c4b5fd;
+      margin-bottom:40px;
+      line-height:1.5
+    }
+    .btns{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:60px}
+    .btn{
+      padding:16px 32px;
+      border-radius:12px;
+      font-size:18px;
+      font-weight:700;
+      border:none;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      text-decoration:none;
+      display:inline-block
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,#7c3aed,#4a2c70);
+      color:#fff;
+      box-shadow:0 10px 30px rgba(124,58,237,0.4)
+    }
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 15px 40px rgba(124,58,237,0.6)}
+    .btn-secondary{
+      background:rgba(124,58,237,0.2);
+      color:#c4b5fd;
+      border:2px solid #7c3aed
+    }
+    .btn-secondary:hover{background:rgba(124,58,237,0.3);transform:translateY(-2px)}
+    
+    .section{padding:80px 20px;max-width:1200px;margin:0 auto}
+    .section-dark{background:rgba(10,10,10,0.8)}
+    .title{text-align:center;font-size:clamp(36px,5vw,56px);margin-bottom:60px;color:#c4b5fd}
+    
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:30px;
+      margin-top:60px
+    }
+    .card{
+      background:rgba(42,42,42,0.6);
+      border:1px solid #4a2c70;
+      border-radius:20px;
+      padding:30px;
+      transition:all 0.3s ease;
+      backdrop-filter:blur(10px)
+    }
+    .card:hover{
+      transform:translateY(-5px);
+      border-color:#7c3aed;
+      box-shadow:0 20px 40px rgba(124,58,237,0.3)
+    }
+    .icon{font-size:48px;margin-bottom:20px}
+    .card h3{font-size:24px;margin-bottom:15px;color:#c4b5fd}
+    .card p{color:#9ca3af;line-height:1.6}
+    
+    .price-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:30px;
+      margin-top:60px
+    }
+    .price-card{
+      background:linear-gradient(135deg,#1a1a1a,#1a0b2e);
+      border:2px solid #4a2c70;
+      border-radius:20px;
+      padding:40px 30px;
+      text-align:center;
+      transition:all 0.3s ease
+    }
+    .price-card:hover{
+      transform:translateY(-10px);
+      border-color:#7c3aed;
+      box-shadow:0 30px 60px rgba(124,58,237,0.4)
+    }
+    .price-card.featured{
+      border-color:#7c3aed;
+      background:linear-gradient(135deg,#2d1b4e,#4a2c70)
+    }
+    .price-tag{
+      font-size:18px;
+      color:#c4b5fd;
+      margin-bottom:10px;
+      text-transform:uppercase;
+      font-weight:700
+    }
+    .price{font-size:56px;font-weight:900;margin-bottom:10px}
+    .period{color:#9ca3af;margin-bottom:30px}
+    .features-list{
+      list-style:none;
+      margin-bottom:30px;
+      text-align:left
+    }
+    .features-list li{
+      padding:12px 0;
+      color:#9ca3af;
+      border-bottom:1px solid rgba(124,58,237,0.2)
+    }
+    .features-list li:last-child{border-bottom:none}
+    
+    .demo-section{
+      background:linear-gradient(135deg,#1a0b2e,#2d1b4e);
+      padding:80px 20px;
+      text-align:center
+    }
+    .demo-container{
+      max-width:1400px;
+      margin:0 auto
+    }
+    .demo-frame{
+      background:#1a1a1a;
+      border:2px solid #4a2c70;
+      border-radius:20px;
+      padding:20px;
+      box-shadow:0 30px 60px rgba(0,0,0,0.5);
+      margin-top:40px
+    }
+    .demo-preview{
+      background:radial-gradient(1000px 500px at 20% 10%,#ffd7ea 0%,#ffe9f2 55%,#ffeef6 100%);
+      border-radius:12px;
+      padding:60px 40px;
+      min-height:600px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center
+    }
+    .demo-preview h3{
+      font-size:32px;
+      color:#2b2b2b;
+      margin-bottom:20px
+    }
+    .demo-preview p{
+      font-size:18px;
+      color:#6a6a6a;
+      max-width:600px;
+      line-height:1.6
+    }
+    
+    footer{
+      background:#0a0a0a;
+      border-top:1px solid #4a2c70;
+      padding:40px 20px;
+      text-align:center
+    }
+    footer p{color:#9ca3af}
+    
+    .arrow{
+      position:absolute;
+      bottom:40px;
+      left:50%;
+      width:30px;
+      height:30px;
+      border-left:3px solid #c4b5fd;
+      border-bottom:3px solid #c4b5fd;
+      transform:translateX(-50%) rotate(-45deg);
+      animation:bounce 2s infinite
+    }
+    @keyframes bounce{
+      0%,100%{transform:translateX(-50%) translateY(0) rotate(-45deg)}
+      50%{transform:translateX(-50%) translateY(10px) rotate(-45deg)}
+    }
+    
+    @media(max-width:768px){
+      .btns{flex-direction:column;align-items:center}
+      .btn{width:100%;max-width:300px}
+    }
+    nav{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      background:rgba(10,10,10,0.95);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid #4a2c70;
+      z-index:1000;
+      padding:15px 0
+    }
+    .nav-content{
+      max-width:1400px;
+      margin:0 auto;
+      padding:0 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px
+    }
+    .nav-logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:20px;
+      font-weight:900;
+      color:#c4b5fd;
+      text-decoration:none
+    }
+    .nav-logo-img{
+      width:40px;
+      height:40px;
+      border-radius:8px;
+      overflow:hidden
+    }
+    .nav-logo-img img{
+      width:100%;
+      height:100%;
+      object-fit:cover
+    }
+    .nav-links{
+      display:flex;
+      gap:30px;
+      align-items:center;
+      flex-wrap:wrap
+    }
+    .nav-links a{
+      color:#c4b5fd;
+      text-decoration:none;
+      font-weight:600;
+      font-size:15px;
+      transition:color 0.3s ease
+    }
+    .nav-links a:hover{
+      color:#fff
+    }
+    @media(max-width:768px){
+      .nav-content{flex-direction:column;gap:10px}
+      .nav-links{gap:15px;font-size:14px}
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-content">
+      <a href="#top" class="nav-logo">
+        <div class="nav-logo-img">
+          <img src="athletechlogo.png" alt="AthleTech Logo" onerror="this.style.display='none';" />
+        </div>
+        AthleTech
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#demo">Prototype</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="top" class="hero">
+    <div class="hero-content">
+      <div class="logo">
+        <img src="athletechlogo.png" alt="AthleTech Logo" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.textContent='AT';" />
+      </div>
+      <h1>AthleTech</h1>
+      <p class="tagline">AI-Powered Athletic Coaching for the Next Generation<br>Real-time motion tracking, personalized training, and injury prevention</p>
+      <div class="btns">
+        <a href="#demo" class="btn btn-primary">Try the Prototype</a>
+        <a href="#pricing" class="btn btn-secondary">View Pricing</a>
+        <a href="#contact" class="btn btn-secondary">Contact Us</a>
+      </div>
+    </div>
+    <div class="arrow"></div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="section">
+    <h2 class="title">Why AthleTech?</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">🎯</div>
+        <h3>AI Form Analysis</h3>
+        <p>Real-time motion tracking detects improper form and provides instant corrections to prevent injuries.</p>
+      </div>
+      <div class="card">
+        <div class="icon">💪</div>
+        <h3>Personalized Training</h3>
+        <p>Custom training plans tailored to your sport, skill level, and goals. Adapts as you improve.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🏀</div>
+        <h3>Multi-Sport Support</h3>
+        <p>Basketball, soccer, volleyball, tennis, track, baseball, swimming, and more. One platform for all sports.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🚨</div>
+        <h3>Safety First</h3>
+        <p>Advanced injury risk detection with emergency contact alerts. Built for athletes ages 10-20.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📊</div>
+        <h3>Performance Tracking</h3>
+        <p>Monitor heart rate, fatigue, impact forces, and form scores. See your progress over time.</p>
+      </div>
+      <div class="card">
+        <div class="icon">⚡</div>
+        <h3>Real-Time Feedback</h3>
+        <p>Instant coaching cues during training sessions. Like having a personal coach 24/7.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Section -->
+  <section id="demo" class="demo-section">
+    <div style="max-width:100%;padding:0 20px;">
+      <h2 class="title">Interactive Prototype</h2>
+      <p style="color:#9ca3af;font-size:18px;margin-bottom:20px;max-width:700px;margin-left:auto;margin-right:auto">
+        Experience AthleTech in action. Generate a training plan, run the motion simulator, and see how our AI evaluates form and safety in real-time.
+      </p>
+      <div style="width:100%;background:#1a1a1a;border:2px solid #4a2c70;border-radius:20px;padding:20px;box-shadow:0 30px 60px rgba(0,0,0,0.5);margin-top:40px;">
+        <iframe src="index.html" style="width:100%;height:1200px;border:none;border-radius:12px;background:#0a0a0a;display:block"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="section">
+    <h2 class="title">Simple, Flexible Pricing</h2>
+    <p style="text-align:center;color:#9ca3af;font-size:18px;margin-bottom:20px;max-width:700px;margin-left:auto;margin-right:auto">
+      Choose the plan that fits your athletic journey. No long-term contracts.
+    </p>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-tag">Starter</div>
+        <div class="price">$25</div>
+        <div class="period">/month</div>
+        <ul class="features-list">
+          <li>✓ 1 primary sport</li>
+          <li>✓ Basic form analysis</li>
+          <li>✓ Training plan generator</li>
+          <li>✓ Safety monitoring</li>
+          <li>✓ Emergency contacts</li>
+        </ul>
+        <button class="btn btn-secondary" style="width:100%">Get Started</button>
+      </div>
+      
+      <div class="price-card featured">
+        <div class="price-tag">Athlete</div>
+        <div class="price">$45</div>
+        <div class="period">/month</div>
+        <ul class="features-list">
+          <li>✓ Up to 3 sports</li>
+          <li>✓ Advanced AI analysis</li>
+          <li>✓ Video form review</li>
+          <li>✓ Weekly coach check-in</li>
+          <li>✓ Progress tracking</li>
+          <li>✓ Priority support</li>
+        </ul>
+        <button class="btn btn-primary" style="width:100%">Most Popular</button>
+      </div>
+      
+      <div class="price-card">
+        <div class="price-tag">Elite</div>
+        <div class="price">$75</div>
+        <div class="period">/month</div>
+        <ul class="features-list">
+          <li>✓ Unlimited sports</li>
+          <li>✓ Daily coach review</li>
+          <li>✓ Custom programs</li>
+          <li>✓ Injury prevention plans</li>
+          <li>✓ Performance analytics</li>
+          <li>✓ Team collaboration</li>
+        </ul>
+        <button class="btn btn-secondary" style="width:100%">Go Elite</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="section section-dark">
+    <h2 class="title">Get in Touch</h2>
+    <p style="text-align:center;color:#9ca3af;font-size:18px;margin-bottom:40px;max-width:700px;margin-left:auto;margin-right:auto">
+      Have questions? Want to schedule a demo?<br>We'd love to hear from you.
+    </p>
+    <div class="grid" style="max-width:900px;margin:0 auto;">
+      <div class="card" style="text-align:center;">
+        <div class="icon">📧</div>
+        <h3>Email Us</h3>
+        <p style="margin-bottom:15px">Get in touch for support<br>or partnership inquiries</p>
+        <a href="mailto:info@athletech.com" style="color:#7c3aed;font-weight:700;text-decoration:none">info@athletech.com</a><br>
+        <a href="mailto:support@athletech.com" style="color:#7c3aed;font-weight:700;text-decoration:none">support@athletech.com</a>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="icon">💬</div>
+        <h3>Social Media</h3>
+        <p style="margin-bottom:15px">Follow us for updates<br>and training tips</p>
+        <div style="display:flex;gap:15px;margin-top:10px;justify-content:center;">
+          <a href="#" style="color:#7c3aed;font-weight:700;text-decoration:none">Instagram</a>
+          <a href="#" style="color:#7c3aed;font-weight:700;text-decoration:none">LinkedIn</a>
+        </div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="icon">📍</div>
+        <h3>Location</h3>
+        <p style="margin-bottom:15px">Based in the heart<br>of innovation</p>
+        <p style="color:#9ca3af;font-size:14px;margin-bottom:5px">Serving athletes worldwide</p>
+        <p style="color:#7c3aed;font-weight:700">Palo Alto, CA</p>
+      </div>
+    </div>
+    <div style="max-width:600px;margin:60px auto 0;padding:30px;background:rgba(42,42,42,0.6);border:1px solid #4a2c70;border-radius:20px;">
+      <h3 style="text-align:center;color:#c4b5fd;margin-bottom:20px;">Quick Contact Form</h3>
+      <form style="display:flex;flex-direction:column;gap:15px;">
+        <input type="text" placeholder="Your Name" style="padding:12px;border:1px solid #4a2c70;background:rgba(26,11,46,0.6);border-radius:12px;color:#fff;font-size:16px;">
+        <input type="email" placeholder="Your Email" style="padding:12px;border:1px solid #4a2c70;background:rgba(26,11,46,0.6);border-radius:12px;color:#fff;font-size:16px;">
+        <textarea placeholder="Your Message" rows="4" style="padding:12px;border:1px solid #4a2c70;background:rgba(26,11,46,0.6);border-radius:12px;color:#fff;font-size:16px;resize:vertical;"></textarea>
+        <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 AthleTech. AI-powered athletic coaching for the next generation.</p>
+    <p style="margin-top:10px;font-size:14px">Ages 10-20 | Multi-sport training | Real-time safety monitoring</p>
+    <div style="margin-top:30px">
+      <a href="#demo" class="btn btn-primary" style="padding:12px 24px;font-size:16px">Try Interactive Prototype →</a>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+      anchor.addEventListener('click',function(e){
+        e.preventDefault();
+        const target=document.querySelector(this.getAttribute('href'));
+        if(target){
+          target.scrollIntoView({behavior:'smooth',block:'start'});
+        }
+      });
+    });
+  </script>
+</body>
+</html>
