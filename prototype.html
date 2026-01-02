@@ -1,703 +1,500 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AthleTech Prototype</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AthleTech - AI Athletic Coaching</title>
   <style>
-    :root{
-      --bg: #0a0a0a;
-      --card: rgba(42,42,42,0.6);
-      --ink: #c4b5fd;
-      --muted: #9ca3af;
-      --border: #4a2c70;
-      --purple: #7c3aed;
-      --purple2: #a78bfa;
-      --purple-glow: #c4b5fd;
-      --good: #1f9d69;
-      --warn: #e28b2c;
-      --bad: #d63b4a;
-      --shadow: 0 20px 40px rgba(124,58,237,0.3);
-      --radius: 18px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-    }
-    *{box-sizing:border-box}
+    *{margin:0;padding:0;box-sizing:border-box}
     body{
-      margin:0;
-      font-family:var(--sans);
+      font-family:system-ui,sans-serif;
+      background:#0a0a0a;
       color:#fff;
-      background: var(--bg);
+      overflow-x:hidden
+    }
+    .hero{
       min-height:100vh;
-      padding:20px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:100px 20px 40px;
+      position:relative;
+      background:linear-gradient(135deg,#0a0a0a 0%,#1a0b2e 50%,#2d1b4e 100%);
     }
-    header{
-      position:sticky; top:0;
-      backdrop-filter: blur(10px);
-      background: rgba(42,42,42,0.6);
-      border-bottom:1px solid var(--border);
-      z-index:10;
-      border-radius:12px;
-      margin-bottom:20px;
+    .hero::before{
+      content:'';
+      position:absolute;
+      top:50%;
+      left:50%;
+      width:600px;
+      height:600px;
+      background:radial-gradient(circle,rgba(124,58,237,0.3) 0%,transparent 70%);
+      transform:translate(-50%,-50%);
+      animation:pulse 4s ease-in-out infinite;
     }
-    .wrap{max-width:1200px; margin:0 auto; padding:16px 18px;}
-    .topbar{
-      display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+    @keyframes pulse{
+      0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.3}
+      50%{transform:translate(-50%,-50%) scale(1.2);opacity:0.5}
     }
-    .brand{
-      display:flex; align-items:center; gap:12px;
-    }
+    .hero-content{position:relative;z-index:2;max-width:1000px}
     .logo{
-      width:46px; height:46px;
-      border-radius:14px;
-      background: linear-gradient(135deg, var(--purple), var(--purple2));
+      width:160px;
+      height:160px;
+      margin:0 auto 30px;
+      background:linear-gradient(135deg,#7c3aed,#a78bfa);
+      border-radius:0px;
       display:flex;
       align-items:center;
       justify-content:center;
-      box-shadow: 0 10px 30px rgba(124,58,237,0.4);
-      border:1px solid var(--purple-glow);
-      font-weight:800;
-      letter-spacing:.2px;
-      overflow:hidden;
-      position:relative;
+      font-size:48px;
+      font-weight:900;
+      box-shadow:0 20px 60px rgba(124,58,237,0.4);
+      border:2px solid #c4b5fd;
+      overflow:hidden
     }
-    .logo img{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      display:block;
+    h1{
+      font-size:clamp(48px,8vw,86px);
+      font-weight:900;
+      margin-bottom:20px;
+      background:linear-gradient(135deg,#fff,#c4b5fd);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text
     }
-    .brand h1{font-size:18px; margin:0; color:var(--purple-glow);}
-    .brand p{margin:0; font-size:12px; color:var(--muted);}
-    .pill{
-      display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end;
+    .tagline{
+      font-size:clamp(18px,3vw,24px);
+      color:#c4b5fd;
+      margin-bottom:40px;
+      line-height:1.5
     }
-    .tag{
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      background: rgba(124,58,237,0.2);
-      border: 1px solid var(--purple);
-      color: var(--purple-glow);
-    }
-    main{padding:22px 0 44px;}
-    .grid{
-      display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap:16px;
-      max-width:1200px;
-      margin:0 auto;
-    }
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr;}
-    }
-    .card{
-      background: var(--card);
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding:16px;
-      backdrop-filter:blur(10px);
-    }
-    .card h2{
-      margin:0 0 10px 0;
-      font-size:16px;
-      color:var(--purple-glow);
-    }
-    .sub{
-      margin:0 0 14px 0;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.35;
-    }
-    .row{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
-    @media (max-width: 650px){
-      .row{grid-template-columns:1fr;}
-    }
-    label{
-      display:block;
-      font-size:12px;
-      color:var(--muted);
-      margin:0 0 6px 2px;
-    }
-    input, select, textarea{
-      width:100%;
-      border:1px solid var(--border);
-      background:rgba(26,11,46,0.6);
-      border-radius: 12px;
-      padding:10px 11px;
-      font-size:14px;
-      outline:none;
-      color:#fff;
-    }
-    textarea{min-height:84px; resize:vertical;}
-    input:focus, select:focus, textarea:focus{
-      border-color: var(--purple);
-      box-shadow: 0 0 0 4px rgba(124,58,237,.20);
-    }
-    .btnrow{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top:12px;
-    }
-    button{
+    .btns{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:60px}
+    .btn{
+      padding:16px 32px;
+      border-radius:12px;
+      font-size:18px;
+      font-weight:700;
       border:none;
       cursor:pointer;
-      border-radius: 14px;
-      padding:10px 12px;
-      font-weight:700;
-      font-size:14px;
-      transition: transform .05s ease, filter .15s ease, box-shadow .15s ease;
+      transition:all 0.3s ease;
+      text-decoration:none;
+      display:inline-block
     }
-    button:active{transform: translateY(1px);}
-    .btn{
-      background: linear-gradient(135deg, var(--purple), #4a2c70);
+    .btn-primary{
+      background:linear-gradient(135deg,#7c3aed,#4a2c70);
       color:#fff;
-      box-shadow: 0 10px 30px rgba(124,58,237,0.4);
+      box-shadow:0 10px 30px rgba(124,58,237,0.4)
     }
-    .btn.secondary{
-      background: rgba(124,58,237,0.2);
-      color: var(--purple-glow);
-      border:2px solid var(--purple);
-      box-shadow:none;
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 15px 40px rgba(124,58,237,0.6)}
+    .btn-secondary{
+      background:rgba(124,58,237,0.2);
+      color:#c4b5fd;
+      border:2px solid #7c3aed
     }
-    .btn.danger{
-      background: linear-gradient(135deg, #ff6f86, #d63b4a);
-      color:#fff;
-    }
-    .btn:disabled{
-      opacity:.55;
-      cursor:not-allowed;
-      filter:saturate(.7);
-    }
-    .split{
+    .btn-secondary:hover{background:rgba(124,58,237,0.3);transform:translateY(-2px)}
+    
+    .section{padding:80px 20px;max-width:1200px;margin:0 auto}
+    .section-dark{background:rgba(10,10,10,0.8)}
+    .title{text-align:center;font-size:clamp(36px,5vw,56px);margin-bottom:60px;color:#c4b5fd}
+    
+    .grid{
       display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:30px;
+      margin-top:60px
     }
-    @media (max-width: 900px){
-      .split{grid-template-columns:1fr;}
+    .card{
+      background:rgba(42,42,42,0.6);
+      border:1px solid #4a2c70;
+      border-radius:20px;
+      padding:30px;
+      transition:all 0.3s ease;
+      backdrop-filter:blur(10px)
     }
-    .box{
-      border:1px solid var(--border);
-      background: rgba(26,11,46,0.4);
-      border-radius: 14px;
-      padding:12px;
+    .card:hover{
+      transform:translateY(-5px);
+      border-color:#7c3aed;
+      box-shadow:0 20px 40px rgba(124,58,237,0.3)
     }
-    .kpi{
-      display:flex; gap:10px; flex-wrap:wrap;
+    .icon{font-size:48px;margin-bottom:20px}
+    .card h3{font-size:24px;margin-bottom:15px;color:#c4b5fd}
+    .card p{color:#9ca3af;line-height:1.6}
+    
+    .price-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:30px;
+      margin-top:60px
     }
-    .kpi .chip{
-      padding:8px 10px;
-      border-radius: 12px;
-      border:1px solid var(--border);
-      background: rgba(124,58,237,0.1);
-      font-size:12px;
-      color:var(--purple-glow);
+    .price-card{
+      background:linear-gradient(135deg,#1a1a1a,#1a0b2e);
+      border:2px solid #4a2c70;
+      border-radius:20px;
+      padding:40px 30px;
+      text-align:center;
+      transition:all 0.3s ease
     }
-    .kpi .v{font-weight:800; margin-left:6px; font-family:var(--mono);}
-    .log{
-      font-family: var(--mono);
-      font-size: 12px;
-      line-height: 1.35;
-      color:var(--purple-glow);
-      background: rgba(26,11,46,0.6);
-      border:1px solid var(--border);
-      border-radius: 14px;
-      padding:10px;
-      min-height: 140px;
-      max-height: 200px;
-      overflow:auto;
-      white-space: pre-wrap;
+    .price-card:hover{
+      transform:translateY(-10px);
+      border-color:#7c3aed;
+      box-shadow:0 30px 60px rgba(124,58,237,0.4)
     }
-    .status{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:10px 12px;
-      border-radius: 14px;
-      border:1px solid var(--border);
-      background: rgba(42,42,42,0.5);
+    .price-card.featured{
+      border-color:#7c3aed;
+      background:linear-gradient(135deg,#2d1b4e,#4a2c70)
     }
-    .status-title{
-      font-weight:800;
-      color:var(--purple-glow);
+    .price-tag{
+      font-size:18px;
+      color:#c4b5fd;
+      margin-bottom:10px;
+      text-transform:uppercase;
+      font-weight:700
     }
-    .badge{
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:800;
-      border:1px solid rgba(0,0,0,.08);
+    .price{font-size:56px;font-weight:900;margin-bottom:10px}
+    .period{color:#9ca3af;margin-bottom:30px}
+    .features-list{
+      list-style:none;
+      margin-bottom:30px;
+      text-align:left
     }
-    .badge.good{background: rgba(31,157,105,.14); color: var(--good); border-color: rgba(31,157,105,.25);}
-    .badge.warn{background: rgba(226,139,44,.16); color: var(--warn); border-color: rgba(226,139,44,.25);}
-    .badge.bad{background: rgba(214,59,74,.14); color: var(--bad); border-color: rgba(214,59,74,.25);}
-    .tiny{font-size:12px;color:var(--muted);margin:8px 0 0 2px;}
-    .footerNote{
-      margin-top:10px;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.35;
+    .features-list li{
+      padding:12px 0;
+      color:#9ca3af;
+      border-bottom:1px solid rgba(124,58,237,0.2)
     }
-
-    /* Modal */
-    .modalOverlay{
-      position:fixed; inset:0;
-      background: rgba(10,10,10,.85);
-      display:none;
+    .features-list li:last-child{border-bottom:none}
+    
+    .demo-section{
+      background:linear-gradient(135deg,#1a0b2e,#2d1b4e);
+      padding:80px 20px;
+      text-align:center
+    }
+    .demo-container{
+      max-width:1400px;
+      margin:0 auto
+    }
+    .demo-frame{
+      background:#1a1a1a;
+      border:2px solid #4a2c70;
+      border-radius:20px;
+      padding:20px;
+      box-shadow:0 30px 60px rgba(0,0,0,0.5);
+      margin-top:40px
+    }
+    .demo-preview{
+      background:radial-gradient(1000px 500px at 20% 10%,#ffd7ea 0%,#ffe9f2 55%,#ffeef6 100%);
+      border-radius:12px;
+      padding:60px 40px;
+      min-height:600px;
+      display:flex;
+      flex-direction:column;
       align-items:center;
       justify-content:center;
-      padding:18px;
-      z-index:100;
+      text-align:center
     }
-    .modal{
-      width:min(680px, 100%);
-      background: rgba(42,42,42,0.95);
-      border:2px solid var(--purple);
-      border-radius: 20px;
-      box-shadow: 0 22px 60px rgba(124,58,237,0.5);
-      overflow:hidden;
+    .demo-preview h3{
+      font-size:32px;
+      color:#2b2b2b;
+      margin-bottom:20px
     }
-    .modalHeader{
-      padding:14px 16px;
-      border-bottom:1px solid var(--border);
+    .demo-preview p{
+      font-size:18px;
+      color:#6a6a6a;
+      max-width:600px;
+      line-height:1.6
+    }
+    
+    footer{
+      background:#0a0a0a;
+      border-top:1px solid #4a2c70;
+      padding:40px 20px;
+      text-align:center
+    }
+    footer p{color:#9ca3af}
+    
+    .arrow{
+      position:absolute;
+      bottom:40px;
+      left:50%;
+      width:30px;
+      height:30px;
+      border-left:3px solid #c4b5fd;
+      border-bottom:3px solid #c4b5fd;
+      transform:translateX(-50%) rotate(-45deg);
+      animation:bounce 2s infinite
+    }
+    @keyframes bounce{
+      0%,100%{transform:translateX(-50%) translateY(0) rotate(-45deg)}
+      50%{transform:translateX(-50%) translateY(10px) rotate(-45deg)}
+    }
+    
+    @media(max-width:768px){
+      .btns{flex-direction:column;align-items:center}
+      .btn{width:100%;max-width:300px}
+    }
+    nav{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      background:rgba(10,10,10,0.95);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid #4a2c70;
+      z-index:1000;
+      padding:15px 0
+    }
+    .nav-content{
+      max-width:1400px;
+      margin:0 auto;
+      padding:0 20px;
       display:flex;
       align-items:center;
       justify-content:space-between;
+      gap:20px
+    }
+    .nav-logo{
+      display:flex;
+      align-items:center;
       gap:10px;
-      background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(74,44,112,0.3));
+      font-size:20px;
+      font-weight:900;
+      color:#c4b5fd;
+      text-decoration:none
     }
-    .modalHeader h3{margin:0;font-size:15px;color:var(--purple-glow);}
-    .modalBody{padding:14px 16px;}
-    .modalBody p{margin:0 0 10px 0; color:var(--muted); line-height:1.4;}
-    .modalGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
+    .nav-logo-img{
+      width:40px;
+      height:40px;
+      border-radius:8px;
+      overflow:hidden
     }
-    @media (max-width: 760px){
-      .modalGrid{grid-template-columns:1fr;}
+    .nav-logo-img img{
+      width:100%;
+      height:100%;
+      object-fit:cover
+    }
+    .nav-links{
+      display:flex;
+      gap:30px;
+      align-items:center;
+      flex-wrap:wrap
+    }
+    .nav-links a{
+      color:#c4b5fd;
+      text-decoration:none;
+      font-weight:600;
+      font-size:15px;
+      transition:color 0.3s ease
+    }
+    .nav-links a:hover{
+      color:#fff
+    }
+    @media(max-width:768px){
+      .nav-content{flex-direction:column;gap:10px}
+      .nav-links{gap:15px;font-size:14px}
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <div class="topbar">
-        <div class="brand">
-          <div class="logo" id="logoBox">
-            <img src="athletechLogo.png" alt="AthleTech Logo" onerror="this.style.display='none';this.parentElement.textContent='AT';" />
-          </div>
-          <div>
-            <h1>AthleTech Prototype</h1>
-            <p>AI coaching demo (motion tracking simulator + feedback)</p>
-          </div>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-content">
+      <a href="#top" class="nav-logo">
+        <div class="nav-logo-img">
+          <img src="athletechLogo.png" alt="AthleTech Logo" onerror="this.style.display='none';" />
         </div>
-        <div class="pill">
-          <span class="tag">Ages 10–20</span>
-          <span class="tag">$25/mo base + $10/sport</span>
-          <span class="tag">Real-time feedback</span>
-        </div>
+        AthleTech
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#demo">Prototype</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#contact">Contact</a>
       </div>
     </div>
-  </header>
+  </nav>
 
-  <main>
+  <!-- Hero -->
+  <section id="top" class="hero">
+    <div class="hero-content">
+      <div class="logo">
+        <img src="athletechLogo.png" alt="AthleTech Logo" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.textContent='AT';" />
+      </div>
+      <h1>AthleTech</h1>
+      <p class="tagline">AI-Powered Athletic Coaching for the Next Generation<br>Real-time motion tracking, personalized training, and injury prevention</p>
+      <div class="btns">
+        <a href="#demo" class="btn btn-primary">Try the Prototype</a>
+        <a href="#pricing" class="btn btn-secondary">View Pricing</a>
+        <a href="#contact" class="btn btn-secondary">Contact Us</a>
+      </div>
+    </div>
+    <div class="arrow"></div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="section">
+    <h2 class="title">Why AthleTech?</h2>
     <div class="grid">
-      <!-- LEFT: Inputs + Plan -->
-      <section class="card">
-        <h2>1) Athlete Setup</h2>
-        <p class="sub">Enter athlete info, pick sports, then generate a plan. Run the simulator to create "sensor" data and evaluate form + safety.</p>
-
-        <div class="row">
-          <div>
-            <label for="athleteName">Athlete Name</label>
-            <input id="athleteName" placeholder="e.g., Maya" value="Maya" />
-          </div>
-          <div>
-            <label for="age">Age</label>
-            <input id="age" type="number" min="6" max="30" value="15" />
-          </div>
-          <div>
-            <label for="height">Height (cm)</label>
-            <input id="height" type="number" min="80" max="230" value="165" />
-          </div>
-          <div>
-            <label for="weight">Weight (kg)</label>
-            <input id="weight" type="number" min="15" max="160" value="55" />
-          </div>
-        </div>
-
-        <div style="height:10px"></div>
-
-        <div class="row">
-          <div>
-            <label for="sportPrimary">Primary Sport</label>
-            <select id="sportPrimary">
-              <option>Basketball</option>
-              <option>Soccer</option>
-              <option>Volleyball</option>
-              <option>Tennis</option>
-              <option>Track</option>
-              <option>Baseball/Softball</option>
-              <option>Swimming</option>
-            </select>
-          </div>
-          <div>
-            <label for="skillLevel">Skill Level</label>
-            <select id="skillLevel">
-              <option>Beginner</option>
-              <option selected>Intermediate</option>
-              <option>Advanced</option>
-            </select>
-          </div>
-          <div>
-            <label for="sessionsPerWeek">Sessions / week</label>
-            <select id="sessionsPerWeek">
-              <option>2</option>
-              <option selected>3</option>
-              <option>4</option>
-              <option>5</option>
-            </select>
-          </div>
-          <div>
-            <label for="goal">Main Goal</label>
-            <select id="goal">
-              <option selected>Improve form</option>
-              <option>Speed & agility</option>
-              <option>Strength</option>
-              <option>Endurance</option>
-              <option>Injury prevention</option>
-            </select>
-          </div>
-        </div>
-
-        <div style="height:10px"></div>
-
-        <div class="row">
-          <div>
-            <label for="sportsExtra">Extra Sports (hold Cmd/Ctrl for multi-select)</label>
-            <select id="sportsExtra" multiple size="4">
-              <option>Basketball</option>
-              <option>Soccer</option>
-              <option>Volleyball</option>
-              <option>Tennis</option>
-              <option>Track</option>
-              <option>Baseball/Softball</option>
-              <option>Swimming</option>
-            </select>
-            <div class="tiny">Pricing preview updates automatically.</div>
-          </div>
-          <div>
-            <label for="injuries">Injuries / Constraints</label>
-            <textarea id="injuries" placeholder="e.g., ankle soreness, knee pain, limited equipment..."></textarea>
-          </div>
-        </div>
-
-        <div class="btnrow">
-          <button class="btn" id="btnGenerate">Generate Training Plan</button>
-          <button class="btn secondary" id="btnReset">Reset</button>
-        </div>
-
-        <div style="height:14px"></div>
-
-        <div class="split">
-          <div class="box">
-            <div class="status">
-              <div>
-                <div class="status-title">Plan Preview</div>
-                <div class="tiny" id="planSubtitle">Generate a plan to see details.</div>
-              </div>
-              <span class="badge warn" id="planBadge">Not Ready</span>
-            </div>
-            <div class="footerNote" id="planText">
-              No plan yet.
-            </div>
-          </div>
-
-          <div class="box">
-            <div class="status">
-              <div>
-                <div class="status-title">Estimated Price</div>
-                <div class="tiny">Base $25/mo + $10 per additional sport</div>
-              </div>
-              <span class="badge good" id="priceBadge">$25/mo</span>
-            </div>
-            <div class="footerNote" id="priceText">
-              Select extra sports to see updated pricing.
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- RIGHT: Simulator + Evaluation -->
-      <section class="card">
-        <h2>2) Motion Tracking Simulator</h2>
-        <p class="sub">Click <b>Run Simulator</b> to stream sample "sensor" data. Then click <b>Detect & Evaluate</b> for feedback and safety.</p>
-
-        <div class="split">
-          <div class="box">
-            <div class="status" style="margin-bottom:10px">
-              <div>
-                <div class="status-title">Live Session</div>
-                <div class="tiny" id="sessionHint">Waiting…</div>
-              </div>
-              <span class="badge warn" id="sessionBadge">Idle</span>
-            </div>
-
-            <div style="height:10px"></div>
-
-            <div class="kpi">
-              <div class="chip">Heart Rate<span class="v" id="kpiHr">—</span></div>
-              <div class="chip">Form Score<span class="v" id="kpiForm">—</span></div>
-              <div class="chip">Impact g<span class="v" id="kpiG">—</span></div>
-              <div class="chip">Fatigue<span class="v" id="kpiFatigue">—</span></div>
-            </div>
-
-            <div class="btnrow">
-              <button class="btn" id="btnRun">Run Simulator</button>
-              <button class="btn secondary" id="btnStop" disabled>Stop</button>
-              <button class="btn secondary" id="btnEvaluate" disabled>Detect & Evaluate</button>
-            </div>
-
-            <div class="tiny">Tip: "Unsafe" triggers an alert with actions + emergency contact chooser.</div>
-          </div>
-
-          <div class="box">
-            <div class="status" style="margin-bottom:10px">
-              <div>
-                <div class="status-title">Coach Feedback</div>
-                <div class="tiny" id="coachHint">Run a session to get feedback.</div>
-              </div>
-              <span class="badge warn" id="coachBadge">No Data</span>
-            </div>
-
-            <div style="height:10px"></div>
-
-            <div class="footerNote" id="coachText">
-              Feedback will appear here after evaluation.
-            </div>
-
-            <div style="height:12px"></div>
-
-            <label for="emergencyContact">Emergency Contact</label>
-            <select id="emergencyContact">
-              <option value="Mom (555-0101)">Mom (555-0101)</option>
-              <option value="Dad (555-0102)">Dad (555-0102)</option>
-              <option value="Coach (555-0103)">Coach (555-0103)</option>
-              <option value="Neighbor (555-0104)">Neighbor (555-0104)</option>
-            </select>
-            <div class="tiny">Used when an unsafe event occurs.</div>
-          </div>
-        </div>
-
-        <div style="height:14px"></div>
-
-        <h2>3) Data Stream</h2>
-        <div class="log" id="log">[AthleTech] Ready.</div>
-      </section>
-    </div>
-  </main>
-
-  <!-- MODAL -->
-  <div class="modalOverlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal">
-      <div class="modalHeader">
-        <h3 id="modalTitle">Safety Alert</h3>
-        <button class="btn secondary" id="btnCloseModal" style="padding:8px 10px;">Close</button>
+      <div class="card">
+        <div class="icon">🎯</div>
+        <h3>AI Form Analysis</h3>
+        <p>Real-time motion tracking detects improper form and provides instant corrections to prevent injuries.</p>
       </div>
-      <div class="modalBody">
-        <p id="modalMsg">—</p>
-        <div class="modalGrid">
-          <div class="box">
-            <div style="font-weight:800; margin-bottom:6px;color:var(--purple-glow)">Choose an action</div>
-            <div class="btnrow" style="margin:0;">
-              <button class="btn danger" id="btnActionSOS">Call 911 (Sim)</button>
-              <button class="btn" id="btnActionContact">Text Emergency Contact (Sim)</button>
-              <button class="btn secondary" id="btnActionPause">Pause Session</button>
-            </div>
-            <div class="tiny" id="actionHint" style="margin-top:10px;">Actions are simulated (no real calls/texts).</div>
-          </div>
-          <div class="box">
-            <div style="font-weight:800; margin-bottom:6px;color:var(--purple-glow)">Emergency contact</div>
-            <div class="tiny">Selected:</div>
-            <div style="font-family:var(--mono); font-weight:800; margin:6px 0 10px 0;color:#fff" id="modalContact">—</div>
-            <div class="tiny">You can change it in the main panel.</div>
-          </div>
-        </div>
+      <div class="card">
+        <div class="icon">💪</div>
+        <h3>Personalized Training</h3>
+        <p>Custom training plans tailored to your sport, skill level, and goals. Adapts as you improve.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🏀</div>
+        <h3>Multi-Sport Support</h3>
+        <p>Basketball, soccer, volleyball, tennis, track, baseball, swimming, and more. One platform for all sports.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🚨</div>
+        <h3>Safety First</h3>
+        <p>Advanced injury risk detection with emergency contact alerts. Built for athletes ages 10-20.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📊</div>
+        <h3>Performance Tracking</h3>
+        <p>Monitor heart rate, fatigue, impact forces, and form scores. See your progress over time.</p>
+      </div>
+      <div class="card">
+        <div class="icon">⚡</div>
+        <h3>Real-Time Feedback</h3>
+        <p>Instant coaching cues during training sessions. Like having a personal coach 24/7.</p>
       </div>
     </div>
-  </div>
+  </section>
 
-<script>
-(function(){
-  const $ = (id) => document.getElementById(id);
+  <!-- Demo Section -->
+  <section id="demo" class="demo-section">
+    <div style="max-width:100%;padding:0 20px;">
+      <h2 class="title">Interactive Prototype</h2>
+      <p style="color:#9ca3af;font-size:18px;margin-bottom:20px;max-width:700px;margin-left:auto;margin-right:auto">
+        Experience AthleTech in action. Generate a training plan, run the motion simulator, and see how our AI evaluates form and safety in real-time.
+      </p>
+      <div style="width:100%;background:#1a1a1a;border:2px solid #4a2c70;border-radius:20px;padding:20px;box-shadow:0 30px 60px rgba(0,0,0,0.5);margin-top:40px;">
+        <iframe src="prototype.html" style="width:100%;height:750px;border:none;border-radius:12px;background:#0a0a0a;display:block"></iframe>
+      </div>
+    </div>
+  </section>
 
-  const logEl = $("log");
-  function log(line){
-    const t = new Date();
-    const stamp = t.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit", second:"2-digit"});
-    logEl.textContent += `\n[${stamp}] ${line}`;
-    logEl.scrollTop = logEl.scrollHeight;
-  }
+  <!-- Pricing -->
+  <section id="pricing" class="section">
+    <h2 class="title">Simple, Flexible Pricing</h2>
+    <p style="text-align:center;color:#9ca3af;font-size:18px;margin-bottom:20px;max-width:700px;margin-left:auto;margin-right:auto">
+      Choose the plan that fits your athletic journey. No long-term contracts.
+    </p>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-tag">Starter</div>
+        <div class="price">$25</div>
+        <div class="period">/month</div>
+        <ul class="features-list">
+          <li>✓ 1 primary sport</li>
+          <li>✓ Basic form analysis</li>
+          <li>✓ Training plan generator</li>
+          <li>✓ Safety monitoring</li>
+          <li>✓ Emergency contacts</li>
+        </ul>
+        <button class="btn btn-secondary" style="width:100%">Get Started</button>
+      </div>
+      
+      <div class="price-card featured">
+        <div class="price-tag">Athlete</div>
+        <div class="price">$45</div>
+        <div class="period">/month</div>
+        <ul class="features-list">
+          <li>✓ Up to 3 sports</li>
+          <li>✓ Advanced AI analysis</li>
+          <li>✓ Video form review</li>
+          <li>✓ Weekly coach check-in</li>
+          <li>✓ Progress tracking</li>
+          <li>✓ Priority support</li>
+        </ul>
+        <button class="btn btn-primary" style="width:100%">Most Popular</button>
+      </div>
+      
+      <div class="price-card">
+        <div class="price-tag">Elite</div>
+        <div class="price">$75</div>
+        <div class="period">/month</div>
+        <ul class="features-list">
+          <li>✓ Unlimited sports</li>
+          <li>✓ Daily coach review</li>
+          <li>✓ Custom programs</li>
+          <li>✓ Injury prevention plans</li>
+          <li>✓ Performance analytics</li>
+          <li>✓ Team collaboration</li>
+        </ul>
+        <button class="btn btn-secondary" style="width:100%">Go Elite</button>
+      </div>
+    </div>
+  </section>
 
-  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-  function rnd(min, max){ return Math.random() * (max - min) + min; }
-  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  <!-- Contact Section -->
+  <section id="contact" class="section section-dark">
+    <h2 class="title">Get in Touch</h2>
+    <p style="text-align:center;color:#9ca3af;font-size:18px;margin-bottom:40px;max-width:700px;margin-left:auto;margin-right:auto">
+      Have questions? Want to schedule a demo?<br>We'd love to hear from you.
+    </p>
+    <div class="grid" style="max-width:900px;margin:0 auto;">
+      <div class="card" style="text-align:center;">
+        <div class="icon">📧</div>
+        <h3>Email Us</h3>
+        <p style="margin-bottom:15px">Get in touch for support<br>or partnership inquiries</p>
+        <a href="mailto:info@athletech.com" style="color:#7c3aed;font-weight:700;text-decoration:none">info@athletech.com</a><br>
+        <a href="mailto:support@athletech.com" style="color:#7c3aed;font-weight:700;text-decoration:none">support@athletech.com</a>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="icon">💬</div>
+        <h3>Social Media</h3>
+        <p style="margin-bottom:15px">Follow us for updates<br>and training tips</p>
+        <div style="display:flex;gap:15px;margin-top:10px;justify-content:center;">
+          <a href="#" style="color:#7c3aed;font-weight:700;text-decoration:none">Instagram</a>
+          <a href="#" style="color:#7c3aed;font-weight:700;text-decoration:none">LinkedIn</a>
+        </div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="icon">📍</div>
+        <h3>Location</h3>
+        <p style="margin-bottom:15px">Based in the heart<br>of innovation</p>
+        <p style="color:#9ca3af;font-size:14px;margin-bottom:5px">Serving athletes worldwide</p>
+        <p style="color:#7c3aed;font-weight:700">Palo Alto, CA</p>
+      </div>
+    </div>
+    <div style="max-width:600px;margin:60px auto 0;padding:30px;background:rgba(42,42,42,0.6);border:1px solid #4a2c70;border-radius:20px;">
+      <h3 style="text-align:center;color:#c4b5fd;margin-bottom:20px;">Quick Contact Form</h3>
+      <form style="display:flex;flex-direction:column;gap:15px;">
+        <input type="text" placeholder="Your Name" style="padding:12px;border:1px solid #4a2c70;background:rgba(26,11,46,0.6);border-radius:12px;color:#fff;font-size:16px;">
+        <input type="email" placeholder="Your Email" style="padding:12px;border:1px solid #4a2c70;background:rgba(26,11,46,0.6);border-radius:12px;color:#fff;font-size:16px;">
+        <textarea placeholder="Your Message" rows="4" style="padding:12px;border:1px solid #4a2c70;background:rgba(26,11,46,0.6);border-radius:12px;color:#fff;font-size:16px;resize:vertical;"></textarea>
+        <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;">Send Message</button>
+      </form>
+    </div>
+  </section>
 
-  function getExtraSportsCount(){
-    const sel = Array.from($("sportsExtra").selectedOptions).map(o => o.value);
-    const primary = $("sportPrimary").value;
-    return sel.filter(s => s !== primary).length;
-  }
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 AthleTech. AI-powered athletic coaching for the next generation.</p>
+    <p style="margin-top:10px;font-size:14px">Ages 10-20 | Multi-sport training | Real-time safety monitoring</p>
+    <div style="margin-top:30px">
+      <a href="#demo" class="btn btn-primary" style="padding:12px 24px;font-size:16px">Try Interactive Prototype →</a>
+    </div>
+  </footer>
 
-  function updatePricingUI(){
-    const extra = getExtraSportsCount();
-    const price = 25 + extra * 10;
-    $("priceBadge").textContent = `$${price}/mo`;
-    $("priceText").textContent = extra === 0
-      ? "Base plan selected (1 sport)."
-      : `Base + ${extra} additional sport${extra>1?"s":""} = $${price}/mo.`;
-  }
-
-  function generatePlan(){
-    const name = ($("athleteName").value || "Athlete").trim();
-    const age = parseInt($("age").value || "0", 10);
-    const primary = $("sportPrimary").value;
-    const level = $("skillLevel").value;
-    const sessions = parseInt($("sessionsPerWeek").value, 10);
-    const goal = $("goal").value;
-    const injuries = ($("injuries").value || "").trim();
-
-    const warmups = [
-      "5–8 min easy jog or jump rope",
-      "Dynamic stretch: hips/ankles/shoulders",
-      "2 rounds: high knees, butt kicks, side shuffles (20s each)"
-    ];
-
-    const skillBlocks = {
-      "Basketball": ["Ball-handling + change of pace", "Shooting form: 50 makes", "Defensive footwork slides"],
-      "Soccer": ["First touch drills", "Passing accuracy (short/long)", "Acceleration + decel mechanics"],
-      "Volleyball": ["Approach timing + arm swing", "Setting consistency", "Landing mechanics (knees tracking)"],
-      "Tennis": ["Split-step timing", "Forehand/backhand contact point", "Footwork ladder + recovery steps"],
-      "Track": ["Sprint mechanics (A-skips/B-skips)", "Start technique", "Stride frequency drills"],
-      "Baseball/Softball": ["Throwing mechanics", "Bat path consistency", "Hip-shoulder separation drills"],
-      "Swimming": ["Streamline + kick efficiency", "Breathing rhythm", "Pull pattern + catch"]
-    };
-
-    const strengthBlocks = {
-      "Beginner": ["Bodyweight squats 3x10", "Glute bridge 3x12", "Plank 3x30s", "Band rows 3x12"],
-      "Intermediate": ["Goblet squats 4x8", "RDL 3x10", "Side plank 3x30s/side", "Split squats 3x8/side"],
-      "Advanced": ["Front squat 5x5", "Deadlift 4x4", "Nordic curl 3x5", "Pallof press 3x12"]
-    };
-
-    const recovery = [
-      "Cooldown 5 min",
-      "Mobility: calves/hips/hamstrings 6–8 min",
-      "Sleep target: 8–9 hours",
-      "Hydration: sip before/during/after"
-    ];
-
-    const focusByGoal = {
-      "Improve form": "Prioritize slow reps + video checkpoints. Quality > volume.",
-      "Speed & agility": "Keep reps short, rest enough, sharp cuts with clean deceleration.",
-      "Strength": "Add 1 strength day and track progressive overload weekly.",
-      "Endurance": "Add Zone-2 steady work, increase volume gradually (10% rule).",
-      "Injury prevention": "Extra ankles/hips/core work + landing mechanics every session."
-    };
-
-    const plan = [
-      `Athlete: ${name} (Age ${age})`,
-      `Primary sport: ${primary} | Level: ${level} | Sessions/week: ${sessions} | Goal: ${goal}`,
-      "",
-      `Warm-up (every session):`,
-      `- ${warmups[0]}`,
-      `- ${warmups[1]}`,
-      `- ${warmups[2]}`,
-      "",
-      `Skill block (sport-specific):`,
-      `- ${pick(skillBlocks[primary] || ["Technique drills", "Footwork", "Control + accuracy"])}`,
-      `- ${pick(skillBlocks[primary] || ["Technique drills", "Footwork", "Control + accuracy"])}`,
-      "",
-      `Strength / stability (2x per week):`,
-      `- ${strengthBlocks[level][0]}`,
-      `- ${strengthBlocks[level][1]}`,
-      `- ${strengthBlocks[level][2]}`,
-      `- ${strengthBlocks[level][3]}`,
-      "",
-      `Recovery:`,
-      `- ${recovery[0]}`,
-      `- ${recovery[1]}`,
-      `- ${recovery[2]}`,
-      `- ${recovery[3]}`,
-      "",
-      `Goal focus: ${focusByGoal[goal]}`,
-      injuries ? `\nConstraints noted: ${injuries}` : ""
-    ].join("\n");
-
-    $("planSubtitle").textContent = "Plan generated. Run a session to evaluate form + safety.";
-    $("planBadge").textContent = "Ready";
-    $("planBadge").className = "badge good";
-    $("planText").textContent = plan;
-
-    log(`[Plan] Generated for ${name} (${primary}, ${level}).`);
-  }
-
-  function resetAll(){
-    $("athleteName").value = "Maya";
-    $("age").value = 15;
-    $("height").value = 165;
-    $("weight").value = 55;
-    $("sportPrimary").value = "Basketball";
-    $("skillLevel").value = "Intermediate";
-    $("sessionsPerWeek").value = "3";
-    $("goal").value = "Improve form";
-    $("injuries").value = "";
-    Array.from($("sportsExtra").options).forEach(o => o.selected = false);
-
-    $("planSubtitle").textContent = "Generate a plan to see details.";
-    $("planBadge").textContent = "Not Ready";
-    $("planBadge").className = "badge warn";
-    $("planText").textContent = "No plan yet.";
-
-    $("coachHint").textContent = "Run a session to get feedback.";
-    $("coachBadge").textContent = "No Data";
-    $("coachBadge").className = "badge warn";
-    $("coachText").textContent = "Feedback will appear here after evaluation.";
-
-    stopSim(true);
-    logEl.textContent = "[AthleTech] Ready.";
-    updatePricingUI();
-    log("[Reset] All fields reset.");
-  }
-
-  let simTimer = null;
-  let lastPacket = null;
-  let windowPackets = [];
-
-  function makePacket(){
-    const baseHr = 95 + rnd(-8, 10);
-    const sprint = $("goal").value === "Speed & agility";
-    const strength = $("goal").value === "Strength";
-    const endurance = $("goal").value === "Endurance";
-
-    let hr = baseHr + (sprint ? rnd(10, 30) : endurance ? rnd(15, 35) : strength ? rnd(5, 20) : rnd(8, 26));
-    let g = rnd(0.6, 2.2) + (sprint ? rnd(0.2, 0.9) : 0) + (strength ? rnd(0.0, 0.4) : 0);
-    let fatigue = rnd(10, 30) + (hr - 90) * 0.6 + windowPackets.length * 0.25;
-
-    const level = $("skillLevel").value;
-    const levelBoost = level === "Beginner" ? 0 : level === "Intermediate" ? 8 : 14;
-    let form = 92 + levelBoost - (g * 10) - (fatigue * 0.25) + rnd(-6, 6);
-
-    hr = Math.round(clamp(hr, 70, 200));
-    g = Math.round(clamp(g, 0.3, 6.0) * 10) / 10;
-    fatigue = Math.round(clamp(fatigue, 0, 100));
-    form = Math.round(clamp(form, 0, 100));
-
-    const ankleRisk = /ankle/i.test($("injuries").value || "");
-    const kneeRisk = /knee/i.test($("injuries").value || "");
-
-    if ((ankleRisk || kneeRisk) && Math.random() < 0.22){
-      g = Math.round(clamp(g + rnd(0.7, 1.6), 0.3, 6.0) * 10) / 10;
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+      anchor.addEventListener('click',function(e){
+        e.preventDefault();
+        const target=document.querySelector(this.getAttribute('href'));
+        if(target){
+          target.scrollIntoView({behavior:'smooth',block:'start'});
+        }
+      });
+    });
+  </script>
+</body>
+</html>
